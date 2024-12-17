@@ -7,6 +7,13 @@ const titulo = document.querySelector('.app__title')
 const botoes = document.querySelectorAll('.app__card-button')
 const toggle_musica = document.getElementById('alternar-musica')
 const musica = new Audio('/sons/luna-rise-part-one.mp3')
+const audioPlay = new Audio('/sons/play.wav')
+const audioPause = new Audio('/sons/pause.mp3')
+const audioFim = new Audio('/sons/beep.mp3')
+const comecarBtn = document.querySelector('#start-pause')
+let tempoDecorridoEmSegundos = 5
+let intevaloID = null
+
 musica.loop = true
 
 toggle_musica.addEventListener('change', () => {
@@ -59,3 +66,33 @@ longoBtn.addEventListener("click", () => {
     alterarContexto('descanso-longo')
 })
 
+
+const contagemRegressiva = () => {
+    if(tempoDecorridoEmSegundos <= 0){
+        zerar()
+        audioFim.volume = 0.3
+        audioFim.play()
+        alert('Tempo esgotado')
+        return
+    }
+    tempoDecorridoEmSegundos -=1
+    console.log('Temporizador: '+ tempoDecorridoEmSegundos)
+}
+
+comecarBtn.addEventListener('click', iniciarOuPausar)
+
+function iniciarOuPausar() {
+    if(intevaloID){
+        audioPause.play()
+        zerar()
+        return
+    } else {
+        audioPlay.play()
+    }
+    intevaloID = setInterval(contagemRegressiva, 1000) //valor em ms
+}
+
+function zerar(){
+    clearInterval(intevaloID)
+    intevaloID = null
+}
