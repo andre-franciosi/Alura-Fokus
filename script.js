@@ -6,11 +6,14 @@ const banner = document.querySelector('.app__image')
 const titulo = document.querySelector('.app__title')
 const botoes = document.querySelectorAll('.app__card-button')
 const toggle_musica = document.getElementById('alternar-musica')
+const comecarBtn = document.querySelector('#start-pause')
+const comecarBtnText = document.querySelector('#start-pause span')
+const comecarBtnImg = document.querySelector('#start-pause img')
 const musica = new Audio('/sons/luna-rise-part-one.mp3')
 const audioPlay = new Audio('/sons/play.wav')
 const audioPause = new Audio('/sons/pause.mp3')
 const audioFim = new Audio('/sons/beep.mp3')
-const comecarBtn = document.querySelector('#start-pause')
+
 let tempoDecorridoEmSegundos = 5
 let intevaloID = null
 
@@ -69,10 +72,10 @@ longoBtn.addEventListener("click", () => {
 
 const contagemRegressiva = () => {
     if(tempoDecorridoEmSegundos <= 0){
-        zerar()
         audioFim.volume = 0.3
         audioFim.play()
         alert('Tempo esgotado')
+        zerar()
         return
     }
     tempoDecorridoEmSegundos -=1
@@ -86,13 +89,16 @@ function iniciarOuPausar() {
         audioPause.play()
         zerar()
         return
-    } else {
-        audioPlay.play()
     }
+    audioPlay.play()
     intevaloID = setInterval(contagemRegressiva, 1000) //valor em ms
+    comecarBtnText.textContent = 'Pausar'
+    comecarBtnImg.src = '/imagens/pause.png'
 }
 
 function zerar(){
     clearInterval(intevaloID)
+    comecarBtnText.textContent = 'Começar'
+    comecarBtnImg.src = '/imagens/play_arrow.png'
     intevaloID = null
 }
