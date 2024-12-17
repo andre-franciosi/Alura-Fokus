@@ -6,12 +6,16 @@ const banner = document.querySelector('.app__image')
 const titulo = document.querySelector('.app__title')
 const botoes = document.querySelectorAll('.app__card-button')
 const toggle_musica = document.getElementById('alternar-musica')
+const comecarBtn = document.querySelector('#start-pause')
+const comecarBtnText = document.querySelector('#start-pause span')
+const comecarBtnImg = document.querySelector('#start-pause img')
+const tempoNaTela = document.querySelector('#timer')
 const musica = new Audio('/sons/luna-rise-part-one.mp3')
 const audioPlay = new Audio('/sons/play.wav')
 const audioPause = new Audio('/sons/pause.mp3')
 const audioFim = new Audio('/sons/beep.mp3')
-const comecarBtn = document.querySelector('#start-pause')
-let tempoDecorridoEmSegundos = 5
+
+let tempoDecorridoEmSegundos = 1500
 let intevaloID = null
 
 musica.loop = true
@@ -25,6 +29,7 @@ toggle_musica.addEventListener('change', () => {
 })
 
 function alterarContexto(contexto) {
+    mostrarTempo()
     botoes.forEach(function(contexto){
         contexto.classList.remove('active')
     })
@@ -55,28 +60,30 @@ function alterarContexto(contexto) {
 }
 
 focoBtn.addEventListener("click", () => {
+    tempoDecorridoEmSegundos = 1500
     alterarContexto('foco')
 })
 
 curtoBtn.addEventListener("click", () => {
+    tempoDecorridoEmSegundos = 300
     alterarContexto('descanso-curto')
 })
 
 longoBtn.addEventListener("click", () => {
+    tempoDecorridoEmSegundos = 900
     alterarContexto('descanso-longo')
 })
 
 
 const contagemRegressiva = () => {
     if(tempoDecorridoEmSegundos <= 0){
-        zerar()
         audioFim.volume = 0.3
         audioFim.play()
-        alert('Tempo esgotado')
+        zerar()
         return
     }
     tempoDecorridoEmSegundos -=1
-    console.log('Temporizador: '+ tempoDecorridoEmSegundos)
+    mostrarTempo()
 }
 
 comecarBtn.addEventListener('click', iniciarOuPausar)
@@ -86,13 +93,24 @@ function iniciarOuPausar() {
         audioPause.play()
         zerar()
         return
-    } else {
-        audioPlay.play()
     }
+    audioPlay.play()
     intevaloID = setInterval(contagemRegressiva, 1000) //valor em ms
+    comecarBtnText.textContent = 'Pausar'
+    comecarBtnImg.src = '/imagens/pause.png'
 }
 
 function zerar(){
     clearInterval(intevaloID)
+    comecarBtnText.textContent = 'Começar'
+    comecarBtnImg.src = '/imagens/play_arrow.png'
     intevaloID = null
 }
+
+function mostrarTempo() {
+    const tempo = new Date(tempoDecorridoEmSegundos * 1000)
+    const tempoFormatado = tempo.toLocaleTimeString('pt-Br', {minute: '2-digit', second: '2-digit'})
+    tempoNaTela.innerHTML = `${tempoFormatado}`
+}
+
+mostrarTempo()
