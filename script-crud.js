@@ -2,8 +2,14 @@ const btnAdicionarTarefa = document.querySelector('.app__button--add-task')
 const formAdicionarTarefa = document.querySelector('.app__form-add-task')
 const textArea = document.querySelector('.app__form-textarea')
 const ulTarefas = document.querySelector(".app__section-task-list")
+const paragrafoDescricaoTarefa = document.querySelector('.app__section-active-task-description')
 
 const tarefas = JSON.parse(localStorage.getItem('tarefas')) || []
+let tarefaSelecionada = null
+
+function atualizarTarefas(){
+    localStorage.setItem('tarefas', JSON.stringify(tarefas))
+}
 
 function criarElementoTarefa(tarefa){
     const li = document.createElement('li')
@@ -27,6 +33,15 @@ function criarElementoTarefa(tarefa){
     const button = document.createElement('button')
     button.classList.add('app_button-edit')
 
+    button.onclick = () =>{
+        const novaDescricao = prompt("Qual é o novo nome da tarefa?")
+        if(novaDescricao) {
+            paragrafo.textContent = novaDescricao
+            tarefa.descricao = novaDescricao
+            atualizarTarefas()
+        }
+    }
+
     const imagemBotao = document.createElement('img')
 
     imagemBotao.setAttribute('src', '/imagens/edit.png')
@@ -36,6 +51,21 @@ function criarElementoTarefa(tarefa){
     li.append(svg)
     li.append(paragrafo)
     li.append(button)
+
+    li.onclick = () => {
+        document.querySelectorAll('.app__section-task-list-item-active')
+        .forEach(elemento => {
+            elemento.classList.remove('app__section-task-list-item-active')
+        })
+        if(tarefaSelecionada == tarefa){
+            paragrafoDescricaoTarefa.textContent = ''
+            tarefaSelecionada = null
+            return
+        }
+        tarefaSelecionada = tarefa
+        paragrafoDescricaoTarefa.textContent = tarefa.descricao
+        li.classList.add('app__section-task-list-item-active')
+    }
 
     return li
 }
@@ -52,7 +82,7 @@ formAdicionarTarefa.addEventListener('submit', (evento) => {
     tarefas.push(tarefa)
     const elementoTarefa = criarElementoTarefa(tarefa)
     ulTarefas.append(elementoTarefa)
-    localStorage.setItem('tarefas', JSON.stringify(tarefas))
+    atualizarTarefas()
     textArea.value = ''
     formAdicionarTarefa.classList.add('hidden')
 })
