@@ -60,7 +60,7 @@ function alterarContexto(contexto) {
 }
 
 focoBtn.addEventListener("click", () => {
-    tempoDecorridoEmSegundos = 1500
+    tempoDecorridoEmSegundos = 5
     alterarContexto('foco')
 })
 
@@ -79,6 +79,11 @@ const contagemRegressiva = () => {
     if(tempoDecorridoEmSegundos <= 0){
         audioFim.volume = 0.3
         audioFim.play()
+        const focoAtivo = html.getAttribute('data-contexto') == 'foco'
+        if (focoAtivo){
+            const evento = new CustomEvent('focoFinalizado')
+            document.dispatchEvent(evento)
+        }
         zerar()
         return
     }
